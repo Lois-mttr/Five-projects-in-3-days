@@ -1,0 +1,44 @@
+@model Contactos.Models.Contacto
+
+@{
+    ViewBag.Title = "Eliminar Contacto";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Eliminar Contacto</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4>¿Está seguro que desea eliminar este contacto?</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+                    </dl>
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-secondary" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

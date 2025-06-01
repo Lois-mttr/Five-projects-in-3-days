@@ -1,0 +1,54 @@
+﻿/* Ubicación: Content/Site.css */
+body {
+    padding-bottom: 20px;
+    background-color: #f8f9fa;
+}
+
+.card {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+    .card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+.card-title {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 4px;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+footer {
+    margin-top: 30px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+    .card-deck .card {
+        margin-right: 15px;
+        margin-left: 15px;
+    }
+
+@media (max-width: 768px) {
+    .card-deck .card {
+        flex: 0 0 100%;
+        margin-bottom: 15px;
+    }
+}

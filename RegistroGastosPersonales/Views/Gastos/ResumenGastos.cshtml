@@ -1,0 +1,139 @@
+@* Ubicación: Views/Gastos/Resumen.cshtml *@
+@model RegistroGastosPersonales.Models.ResumenGastos
+
+@{
+    ViewBag.Title = "Resumen de Gastos";
+}
+
+<h2>Resumen de Gastos</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total de Gastos</h3>
+            </div>
+            <div class="panel-body">
+                <h2 class="text-center">@String.Format("{0:C}", Model.TotalGastos)</h2>
+                <p class="text-center">@Model.TotalRegistros registros</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Distribución por Categoría</h3>
+            </div>
+            <div class="panel-body">
+                <div class="chart-container">
+                    <canvas id="chartCategorias" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Detalle por Categoría</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Total</th>
+                            <th>Cantidad</th>
+                            <th>% del Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var categoria in Model.GastosPorCategoria)
+                        {
+                            var porcentaje = Model.TotalGastos > 0 ? (categoria.TotalPorCategoria / Model.TotalGastos) * 100 : 0;
+                            <tr>
+                                <td>@categoria.NombreCategoria</td>
+                                <td>@String.Format("{0:C}", categoria.TotalPorCategoria)</td>
+                                <td>@categoria.CantidadGastos</td>
+                                <td>@String.Format("{0:F2}%", porcentaje)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="well">
+            <div class="btn-group">
+                @Html.ActionLink("Ver todos los gastos", "Index", "Gastos", null, new { @class = "btn btn-default" })
+                @Html.ActionLink("Registrar nuevo gasto", "Create", "Gastos", null, new { @class = "btn btn-success" })
+                @Html.ActionLink("Volver al inicio", "Index", "Home", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function () {
+            var ctx = document.getElementById('chartCategorias').getContext('2d');
+
+            var categorias = [];
+            var montos = [];
+            var colores = [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 159, 64, 0.7)'
+            ];
+
+            @foreach (var categoria in Model.GastosPorCategoria)
+            {
+                @:categorias.push('@categoria.NombreCategoria');
+                @:montos.push(@categoria.TotalPorCategoria.ToString().Replace(",", "."));
+            }
+
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: categorias,
+                    datasets: [{
+                        label: 'Gastos por Categoría',
+                        data: montos,
+                        backgroundColor: colores,
+                        borderColor: colores.map(c => c.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw;
+                                    var total = context.chart.data.datasets[0].data.reduce((a, b) => Number(a) + Number(b), 0);
+                                    var percentage = Math.round((value * 100) / total * 10) / 10;
+                                    return label + ': $' + value + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

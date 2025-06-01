@@ -1,0 +1,12 @@
+@using (Html.BeginForm("Eliminar", "Recetas", new { id = Model.Id }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-danger">
+            <i class="icon-trash"></i>
+            Confirmar Eliminación
+        </button>
+        @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-outline" })
+    </div>
+}

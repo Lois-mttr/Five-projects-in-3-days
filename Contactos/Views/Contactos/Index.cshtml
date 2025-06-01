@@ -1,0 +1,73 @@
+@model IEnumerable<Contactos.Models.Contacto>
+
+    @{
+        ViewBag.Title = "Contactos";
+    }
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>Gestor de Contactos</h2>
+            </div>
+            <div class="col-md-6 text-right">
+                @Html.ActionLink("Nuevo Contacto", "Crear", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                @using (Html.BeginForm("Index", "Contactos", FormMethod.Get, new { @class = "form-inline" }))
+                {
+                    <div class="input-group w-100">
+                        <input type="text" name="busqueda" class="form-control" placeholder="Buscar por nombre o email..." />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-outline-secondary">
+                                <i class="fa fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card-deck">
+                        @foreach (var item in Model)
+                        {
+                            <div class="card mb-4" style="min-width: 18rem; max-width: 18rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Nombre)</h5>
+                                    @if (!string.IsNullOrEmpty(item.Telefono))
+                                    {
+                                        <p class="card-text">
+                                            <i class="fa fa-phone"></i> @Html.DisplayFor(modelItem => item.Telefono)
+                                        </p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.Email))
+                                    {
+                                        <p class="card-text">
+                                            <i class="fa fa-envelope"></i> @Html.DisplayFor(modelItem => item.Email)
+                                        </p>
+                                    }
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    @Html.ActionLink("Detalles", "Detalles", new { id = item.Id }, new { @class = "btn btn-sm btn-info" })
+                                    @Html.ActionLink("Editar", "Editar", new { id = item.Id }, new { @class = "btn btn-sm btn-warning" })
+                                    @Html.ActionLink("Eliminar", "Eliminar", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                No se encontraron contactos. @Html.ActionLink("Crear nuevo contacto", "Crear")
+            </div>
+        }
+    </div>

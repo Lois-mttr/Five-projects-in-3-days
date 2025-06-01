@@ -1,0 +1,82 @@
+﻿@model Biblioteca.Models.Libro
+
+@{
+    ViewBag.Title = "Agregar Nuevo Libro";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2> Agregar Nuevo Libro</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">@Html.ActionLink("Biblioteca", "Index")</li>
+                    <li class="breadcrumb-item active">Nuevo Libro</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4>Información del Libro</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Crear", "Libros", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Titulo)
+                            @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Ingrese el título del libro" } })
+                            @Html.ValidationMessageFor(model => model.Titulo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Autor)
+                            @Html.EditorFor(model => model.Autor, new { htmlAttributes = new { @class = "form-control", @placeholder = "Ingrese el nombre del autor" } })
+                            @Html.ValidationMessageFor(model => model.Autor, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ISBN)
+                                    @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @class = "form-control", @placeholder = "978-84-376-0494-7" } })
+                                    @Html.ValidationMessageFor(model => model.ISBN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AnioPublicacion)
+                                    @Html.EditorFor(model => model.AnioPublicacion, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "1", @max = "2024" } })
+                                    @Html.ValidationMessageFor(model => model.AnioPublicacion, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ArchivoImagen)
+                            <input type="file" name="ArchivoImagen" class="form-control-file" accept="image/*" />
+                            <small class="form-text text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB</small>
+                            @Html.ValidationMessageFor(model => model.ArchivoImagen, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Guardar Libro
+                            </button>
+                            @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-secondary" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,310 @@
+﻿@* Ubicación: ~/Views/Recetas/Estadisticas.cshtml *@
+@model CatalogoRecetas.Models.EstadisticasGenerales
+
+@{
+    ViewBag.Title = "Estadísticas del Catálogo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="header-section">
+    <h1 class="page-title">
+        <i class="icon-stats"></i>
+        Estadísticas del Catálogo
+    </h1>
+    <p class="page-subtitle">Resumen completo de tu colección de recetas</p>
+</div>
+
+<div class="stats-container">
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="icon-recipe-large"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">@Model.TotalRecetas</h3>
+                <p class="stat-label">Total de Recetas</p>
+            </div>
+        </div>
+
+        <div class="stat-card secondary">
+            <div class="stat-icon">
+                <i class="icon-category-large"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">@Model.TotalCategorias</h3>
+                <p class="stat-label">Categorías Disponibles</p>
+            </div>
+        </div>
+
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="icon-clock-large"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">@Math.Round(Model.TiempoPromedioPreparacion, 1) min</h3>
+                <p class="stat-label">Tiempo Promedio</p>
+            </div>
+        </div>
+
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="icon-image-large"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">@Model.RecetasConImagen</h3>
+                <p class="stat-label">Recetas con Imagen</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-details">
+        <div class="detail-card">
+            <h3>
+                <i class="icon-chart"></i>
+                Análisis de Contenido
+            </h3>
+            <div class="detail-content">
+                <div class="progress-item">
+                    <span class="progress-label">Recetas con Imagen</span>
+                    <div class="progress-bar">
+                        @{
+                            double porcentajeConImagen = Model.TotalRecetas > 0 ?
+                                (double)Model.RecetasConImagen / Model.TotalRecetas * 100 : 0;
+                        }
+                        <div class="progress-fill" style="width: @porcentajeConImagen%"></div>
+                    </div>
+                    <span class="progress-value">@Math.Round(porcentajeConImagen, 1)%</span>
+                </div>
+
+                <div class="progress-item">
+                    <span class="progress-label">Recetas sin Imagen</span>
+                    <div class="progress-bar">
+                        @{
+                            double porcentajeSinImagen = 100 - porcentajeConImagen;
+                        }
+                        <div class="progress-fill secondary" style="width: @porcentajeSinImagen%"></div>
+                    </div>
+                    <span class="progress-value">@Math.Round(porcentajeSinImagen, 1)%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <h3>
+                <i class="icon-info"></i>
+                Información Adicional
+            </h3>
+            <div class="detail-content">
+                <div class="info-item">
+                    <span class="info-label">Promedio de recetas por categoría:</span>
+                    <span class="info-value">
+                        @(Model.TotalCategorias > 0 ? Math.Round((double)Model.TotalRecetas / Model.TotalCategorias, 1) : 0)
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Recetas sin imagen:</span>
+                    <span class="info-value">@(Model.TotalRecetas - Model.RecetasConImagen)</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Última actualización:</span>
+                    <span class="info-value">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons-center">
+        @Html.ActionLink("Volver al Catálogo", "Index", null, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Crear Nueva Receta", "Crear", null, new { @class = "btn btn-secondary" })
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para estadísticas */
+.icon-stats::before { content: "📊"; margin-right: 10px; }
+.icon-recipe-large::before { content: "🍽️"; font-size: 2.5rem; }
+.icon-category-large::before { content: "📂"; font-size: 2.5rem; }
+.icon-clock-large::before { content: "⏱️"; font-size: 2.5rem; }
+.icon-image-large::before { content: "🖼️"; font-size: 2.5rem; }
+.icon-chart::before { content: "📈"; margin-right: 10px; }
+.icon-info::before { content: "ℹ️"; margin-right: 10px; }
+
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card.primary { border-left: 5px solid var(--secondary-color); }
+.stat-card.secondary { border-left: 5px solid var(--primary-color); }
+.stat-card.success { border-left: 5px solid var(--success-color); }
+.stat-card.warning { border-left: 5px solid var(--warning-color); }
+
+.stat-icon {
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--dark-gray);
+    margin: 5px 0 0 0;
+}
+
+.stats-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.detail-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.detail-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--light-gray);
+    padding-bottom: 10px;
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.progress-label {
+    min-width: 140px;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: var(--light-gray);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--success-color);
+    transition: width 0.3s ease;
+}
+
+.progress-fill.secondary {
+    background-color: var(--medium-gray);
+}
+
+.progress-value {
+    min-width: 50px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.action-buttons-center {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.action-buttons-center .btn {
+    margin: 0 10px;
+}
+
+@*@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }*@
+
+    .stats-details {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .progress-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .progress-label {
+        min-width: auto;
+    }
+
+    .info-item {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+}
+</style>

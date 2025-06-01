@@ -1,0 +1,93 @@
+﻿@model Biblioteca.Models.Libro
+
+@{
+    ViewBag.Title = "Editar Libro";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>✏️ Editar Libro</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">@Html.ActionLink("Biblioteca", "Index")</li>
+                    <li class="breadcrumb-item">@Html.ActionLink(Model.Titulo, "Detalles", new { id = Model.Id })</li>
+                    <li class="breadcrumb-item active">Editar</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4>Editar Información del Libro</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Editar", "Libros", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id)
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Titulo)
+                            @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Titulo, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Autor)
+                            @Html.EditorFor(model => model.Autor, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Autor, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ISBN)
+                                    @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ISBN, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AnioPublicacion)
+                                    @Html.EditorFor(model => model.AnioPublicacion, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "1", @max = "2024" } })
+                                    @Html.ValidationMessageFor(model => model.AnioPublicacion, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ArchivoImagen)
+                            <input type="file" name="ArchivoImagen" class="form-control-file" accept="image/*" />
+                            <small class="form-text text-muted">Deje vacío para mantener la imagen actual. Formatos: JPG, PNG, GIF. Máximo: 5MB</small>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            @Html.ActionLink("Cancelar", "Detalles", new { id = Model.Id }, new { @class = "btn btn-secondary" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Imagen Actual</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="@Url.Content(Model.RutaImagenCompleta)" alt="@Model.Titulo" class="img-fluid rounded" style="max-height: 300px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

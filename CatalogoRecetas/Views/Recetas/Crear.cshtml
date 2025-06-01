@@ -1,0 +1,131 @@
+@* Ubicación: ~/Views/Recetas/Crear.cshtml *@
+@model CatalogoRecetas.Models.Receta
+
+@{
+    ViewBag.Title = "Nueva Receta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="form-container">
+    <div class="form-header">
+        <h1>
+            <i class="icon-plus"></i>
+            Crear Nueva Receta
+        </h1>
+        <p>Agrega una nueva receta deliciosa a tu catálogo personal</p>
+    </div>
+
+    @using (Html.BeginForm("Crear", "Recetas", FormMethod.Post,
+           new { enctype = "multipart/form-data", @class = "recipe-form" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-section">
+            <h3>Información Básica</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Nombre, new { @class = "form-label" })
+                @Html.EditorFor(model => model.Nombre, new
+                {
+                    htmlAttributes = new
+                    {
+                    @class = "form-input",
+                    @placeholder = "Ej: Pasta Alfredo Casera"
+                    }
+                })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "form-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CategoriaId, new { @class = "form-label" })
+                @Html.DropDownList("CategoriaId", ViewBag.CategoriaId as SelectList,
+                    "Selecciona una categoría", new { @class = "form-select" })
+                @Html.ValidationMessageFor(model => model.CategoriaId, "", new { @class = "form-error" })
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half">
+                    @Html.LabelFor(model => model.TiempoPreparacion, new { @class = "form-label" })
+                    @Html.EditorFor(model => model.TiempoPreparacion, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input",
+                        @type = "number",
+                        @min = "1",
+                        @placeholder = "30"
+                        }
+                    })
+                    @Html.ValidationMessageFor(model => model.TiempoPreparacion, "", new { @class = "form-error" })
+                </div>
+
+                <div class="form-group half">
+                    @Html.LabelFor(model => model.Porciones, new { @class = "form-label" })
+                    @Html.EditorFor(model => model.Porciones, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input",
+                        @type = "number",
+                        @min = "1",
+                        @placeholder = "4"
+                        }
+                    })
+                    @Html.ValidationMessageFor(model => model.Porciones, "", new { @class = "form-error" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Imagen de la Receta</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ArchivoImagen, new { @class = "form-label" })
+                <input type="file" name="ArchivoImagen" accept="image/*" class="form-file" />
+                <small class="form-help">Formatos permitidos: JPG, PNG, GIF (máximo 5MB)</small>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Ingredientes</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Ingredientes, new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.Ingredientes, new
+                {
+                    @class = "form-textarea",
+                    @rows = "6",
+                    @placeholder = "Lista todos los ingredientes necesarios:\n\n• 500g de pasta fettuccine\n• 200ml de crema de leche\n• 100g de queso parmesano rallado\n• 2 dientes de ajo\n• Sal y pimienta al gusto"
+                })
+                @Html.ValidationMessageFor(model => model.Ingredientes, "", new { @class = "form-error" })
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Instrucciones de Preparación</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Instrucciones, new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.Instrucciones, new
+                {
+                    @class = "form-textarea",
+                    @rows = "8",
+                    @placeholder = "Describe paso a paso cómo preparar la receta:\n\n1. Cocinar la pasta en agua hirviendo con sal según las instrucciones del paquete.\n\n2. Mientras tanto, en una sartén grande, calentar un poco de aceite y sofreír el ajo picado.\n\n3. Agregar la crema de leche y cocinar a fuego medio por 2-3 minutos.\n\n4. Incorporar el queso parmesano y mezclar hasta que se derrita.\n\n5. Escurrir la pasta y mezclar con la salsa. Servir inmediatamente."
+                })
+                @Html.ValidationMessageFor(model => model.Instrucciones, "", new { @class = "form-error" })
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="icon-save"></i>
+                Guardar Receta
+            </button>
+            @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-outline" })
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,117 @@
+﻿@model Biblioteca.Models.ViewModels.BibliotecaViewModel
+
+@{
+    ViewBag.Title = "Biblioteca Digital";
+}
+
+<div class="container-fluid">
+    <!-- Encabezado con estadísticas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="biblioteca-header">
+                <h1 class="main-title">📚 Biblioteca Digital</h1>
+                <div class="estadisticas-container">
+                    <div class="estadistica-card">
+                        <div class="estadistica-numero">@Model.Estadisticas.TotalLibros</div>
+                        <div class="estadistica-label">Total Libros</div>
+                    </div>
+                    <div class="estadistica-card">
+                        <div class="estadistica-numero">@Model.Estadisticas.TotalAutores</div>
+                        <div class="estadistica-label">Autores</div>
+                    </div>
+                    @if (Model.Estadisticas.AnioMasAntiguo.HasValue)
+                    {
+                        <div class="estadistica-card">
+                            <div class="estadistica-numero">@Model.Estadisticas.AnioMasAntiguo</div>
+                            <div class="estadistica-label">Más Antiguo</div>
+                        </div>
+                    }
+                    @if (Model.Estadisticas.AnioMasReciente.HasValue)
+                    {
+                        <div class="estadistica-card">
+                            <div class="estadistica-numero">@Model.Estadisticas.AnioMasReciente</div>
+                            <div class="estadistica-label">Más Reciente</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de herramientas -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            @using (Html.BeginForm("Index", "Libros", FormMethod.Get, new { @class = "form-busqueda" }))
+            {
+                <div class="input-group">
+                    <input type="text" name="busqueda" class="form-control" placeholder="Buscar por título o autor..." value="@Model.TerminoBusqueda" />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        @if (!string.IsNullOrEmpty(Model.TerminoBusqueda))
+                        {
+                            @Html.ActionLink("Limpiar", "Index", null, new { @class = "btn btn-outline-secondary" })
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-4 text-right">
+            @Html.ActionLink("Agregar Nuevo Libro", "Crear", null, new { @class = "btn btn-success" })
+        </div>
+    </div>
+
+    <!-- Lista de libros -->
+    @if (Model.Libros.Any())
+    {
+        <div class="row">
+            @foreach (var libro in Model.Libros)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="libro-card">
+                        <div class="libro-imagen">
+                            <img src="@Url.Content(libro.RutaImagenCompleta)" alt="@libro.Titulo" class="img-fluid" />
+                            <div class="libro-overlay">
+                                <div class="libro-acciones">
+                                    @Html.ActionLink("Ver", "Detalles", new { id = libro.Id }, new { @class = "btn btn-sm btn-info" })
+                                    @Html.ActionLink("Editar", "Editar", new { id = libro.Id }, new { @class = "btn btn-sm btn-warning" })
+                                    @Html.ActionLink("Eliminar", "Eliminar", new { id = libro.Id }, new { @class = "btn btn-sm btn-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="libro-info">
+                            <h5 class="libro-titulo">@libro.Titulo</h5>
+                            <p class="libro-autor">@libro.Autor</p>
+                            @if (libro.AnioPublicacion.HasValue)
+                            {
+                                <p class="libro-anio">@libro.AnioPublicacion</p>
+                            }
+                            @if (!string.IsNullOrEmpty(libro.ISBN))
+                            {
+                                <p class="libro-isbn">ISBN: @libro.ISBN</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="sin-resultados">
+            <div class="sin-resultados-icono">📖</div>
+            <div class="sin-resultados-mensaje">
+                @if (!string.IsNullOrEmpty(Model.TerminoBusqueda))
+                {
+                    <span>No se encontraron libros que coincidan con "@Model.TerminoBusqueda"</span>
+                }
+                else
+                {
+                    <span>No hay libros en la biblioteca. ¡Agrega el primero!</span>
+                }
+            </div>
+            @Html.ActionLink("Agregar Nuevo Libro", "Crear", null, new { @class = "btn btn-primary mt-3" })
+        </div>
+    }
+</div>

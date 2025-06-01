@@ -1,0 +1,92 @@
+@* Ubicación: ~/Views/Recetas/Detalles.cshtml *@
+@model CatalogoRecetas.Models.Receta
+
+@{
+    ViewBag.Title = "Detalles - " + Model.Nombre;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="recipe-detail">
+    <div class="recipe-header">
+        <div class="recipe-image-large">
+            @if (!string.IsNullOrEmpty(Model.ImagenRuta))
+            {
+                <img src="@Model.ImagenRuta" alt="@Model.Nombre" />
+            }
+            else
+            {
+                <div class="no-image-large">
+                    <i class="icon-image"></i>
+                    <p>Sin imagen</p>
+                </div>
+            }
+        </div>
+
+        <div class="recipe-info">
+            <h1 class="recipe-title">@Model.Nombre</h1>
+
+            <div class="recipe-meta-detail">
+                <div class="meta-item">
+                    <i class="icon-tag"></i>
+                    <span class="label">Categoría:</span>
+                    <span class="value">@Model.CategoriaId</span>
+                </div>
+
+                @if (Model.TiempoPreparacion.HasValue)
+                {
+                    <div class="meta-item">
+                        <i class="icon-clock"></i>
+                        <span class="label">Tiempo:</span>
+                        <span class="value">@Model.TiempoPreparacion minutos</span>
+                    </div>
+                }
+
+                @if (Model.Porciones.HasValue)
+                {
+                    <div class="meta-item">
+                        <i class="icon-users"></i>
+                        <span class="label">Porciones:</span>
+                        <span class="value">@Model.Porciones personas</span>
+                    </div>
+                }
+
+                <div class="meta-item">
+                    <i class="icon-calendar"></i>
+                    <span class="label">Creada:</span>
+                    <span class="value">@Model.FechaCreacion.ToString("dd/MM/yyyy")</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                @Html.ActionLink("Editar Receta", "Editar", new { id = Model.Id },
+                    new { @class = "btn btn-primary" })
+                @Html.ActionLink("Eliminar", "Eliminar", new { id = Model.Id },
+                    new { @class = "btn btn-danger" })
+                @Html.ActionLink("Volver al Catálogo", "Index", null,
+                    new { @class = "btn btn-outline" })
+            </div>
+        </div>
+    </div>
+
+    <div class="recipe-content-detail">
+        <div class="ingredients-section">
+            <h2>
+                <i class="icon-list"></i>
+                Ingredientes
+            </h2>
+            <div class="ingredients-content">
+                @Html.Raw(Model.Ingredientes.Replace("\n", "<br />"))
+            </div>
+        </div>
+
+        <div class="instructions-section">
+            <h2>
+                <i class="icon-book"></i>
+                Instrucciones de Preparación
+            </h2>
+            <div class="instructions-content">
+                @Html.Raw(Model.Instrucciones.Replace("\n", "<br />"))
+            </div>
+        </div>
+    </div>
+</div>

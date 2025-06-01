@@ -1,0 +1,59 @@
+@model Biblioteca.Models.Libro
+
+@{
+    ViewBag.Title = "Detalles del Libro";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">@Html.ActionLink("Biblioteca", "Index")</li>
+                    <li class="breadcrumb-item active">@Model.Titulo</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="libro-portada-detalle">
+                <img src="@Url.Content(Model.RutaImagenCompleta)" alt="@Model.Titulo" class="img-fluid rounded shadow" />
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="libro-detalles">
+                <h1 class="libro-titulo-detalle">@Model.Titulo</h1>
+                <h3 class="libro-autor-detalle">por @Model.Autor</h3>
+
+                <div class="libro-metadata">
+                    @if (Model.AnioPublicacion.HasValue)
+                    {
+                        <div class="metadata-item">
+                            <strong>Año de Publicación:</strong> @Model.AnioPublicacion
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ISBN))
+                    {
+                        <div class="metadata-item">
+                            <strong>ISBN:</strong> @Model.ISBN
+                        </div>
+                    }
+                    <div class="metadata-item">
+                        <strong>Fecha de Registro:</strong> @Model.FechaCreacion.ToString("dd/MM/yyyy")
+                    </div>
+                    <div class="metadata-item">
+                        <strong>Última Actualización:</strong> @Model.FechaActualizacion.ToString("dd/MM/yyyy")
+                    </div>
+                </div>
+
+                <div class="libro-acciones-detalle">
+                    @Html.ActionLink("Editar Libro", "Editar", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Eliminar Libro", "Eliminar", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                    @Html.ActionLink("Volver a la Biblioteca", "Index", null, new { @class = "btn btn-secondary" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

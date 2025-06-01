@@ -1,0 +1,373 @@
+﻿@model ToDo.Models.ViewModels.TareasViewModel
+
+@{
+    ViewBag.Title = "Lista de Tareas";
+}
+
+<div class="container-fluid">
+    <!-- Encabezado con estadísticas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="header-section">
+                <h1 class="main-title">📋 Mi Lista de Tareas</h1>
+                <div class="estadisticas-container">
+                    <div class="estadistica-card">
+                        <div class="estadistica-numero">@Model.Estadisticas.TotalTareas</div>
+                        <div class="estadistica-label">Total</div>
+                    </div>
+                    <div class="estadistica-card urgente">
+                        <div class="estadistica-numero">@Model.Estadisticas.TareasUrgentes</div>
+                        <div class="estadistica-label">Urgentes</div>
+                    </div>
+                    <div class="estadistica-card vencida">
+                        <div class="estadistica-numero">@Model.Estadisticas.TareasVencidas</div>
+                        <div class="estadistica-label">Vencidas</div>
+                    </div>
+                    <div class="estadistica-card completada">
+                        <div class="estadistica-numero">@Model.Estadisticas.PorcentajeCompletado%</div>
+                        <div class="estadistica-label">Completado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Panel de Control -->
+        <div class="col-lg-4 col-md-5">
+            <div class="panel-control">
+                <!-- Formulario para nueva tarea -->
+                <div class="nueva-tarea-section">
+                    <h3>➕ Nueva Tarea</h3>
+                    @using (Html.BeginForm("CrearTarea", "Home", FormMethod.Post, new { @class = "form-nueva-tarea" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            @Html.TextAreaFor(m => m.NuevaTarea.Descripcion, new
+                            {
+                                @class = "form-control",
+                                placeholder = "¿Qué necesitas hacer?",
+                                rows = "3",
+                                required = "required"
+                            })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.EditorFor(m => m.NuevaTarea.FechaVencimiento, new
+                            {
+                                htmlAttributes = new
+                                {
+                                    @class = "form-control",
+                                    type = "date",
+                                    required = "required"
+                                }
+                            })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.DropDownListFor(m => m.NuevaTarea.EstadoId,
+                                new SelectList(Model.Estados, "Id", "Nombre", Model.NuevaTarea.EstadoId),
+                                new { @class = "form-control" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-plus"></i> Agregar Tarea
+                        </button>
+                    }
+                </div>
+
+                <!-- Filtros -->
+                <div class="filtros-section">
+                    <h3>🔍 Filtros</h3>
+                    <div class="filtros-lista">
+                        @Html.ActionLink("Todas las tareas", "Index", new { vista = "todas" },
+                            new { @class = Model.VistaActual == "todas" ? "filtro-item active" : "filtro-item" })
+
+                        @Html.ActionLink("Tareas vencidas", "Index", new { vista = "vencidas" },
+                            new { @class = Model.VistaActual == "vencidas" ? "filtro-item active" : "filtro-item" })
+
+                        @foreach (var estado in Model.Estados)
+                        {
+                            @Html.ActionLink(estado.Nombre, "Index", new { vista = "estado", estado = estado.Id },
+                                new
+                                     {
+                                    @class = (Model.VistaActual == "estado" && Model.FiltroEstado == estado.Id) ? "filtro-item active" : "filtro-item",
+                                    style = $"border-left: 4px solid {estado.Color};"
+                                })
+                        }
+                    </div>
+                </div>
+
+                <!-- Estadísticas por estado -->
+                <div class="estadisticas-detalle">
+                    <h3>📊 Resumen por Estado</h3>
+                    @foreach (var estadistica in Model.Estadisticas.EstadisticasPorEstado)
+                    {
+                        <div class="estadistica-estado">
+                            <div class="estadistica-color" style="background-color: @estadistica.ColorEstado;"></div>
+                            <div class="estadistica-info">
+                                <span class="estadistica-nombre">@estadistica.NombreEstado</span>
+                                <span class="estadistica-cantidad">@estadistica.CantidadTareas</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Tareas -->
+        <div class="col-lg-8 col-md-7">
+            <div class="tareas-container">
+                <div class="tareas-header">
+                    <h3>
+                        @switch (Model.VistaActual)
+                        {
+                            case "vencidas":
+                                <span>⚠️ Tareas Vencidas</span>
+                                break;
+                            case "estado":
+                                var estadoSeleccionado = Model.Estados.FirstOrDefault(e => e.Id == Model.FiltroEstado);
+                                <span>📌 @(estadoSeleccionado?.Nombre ?? "Estado")</span>
+                                break;
+                            default:
+                                <span>📝 Todas las Tareas</span>
+                                break;
+                        }
+                    </h3>
+                    <span class="tareas-count">@Model.Tareas.Count tareas</span>
+                </div>
+
+                <div class="tareas-lista">
+                    @if (Model.Tareas.Any())
+                    {
+                        foreach (var tarea in Model.Tareas)
+                        {
+                            <div class="tarea-item @tarea.ClaseCss" data-id="@tarea.Id">
+                                <div class="tarea-checkbox">
+                                    @if (tarea.NombreEstado == "Completada")
+                                    {
+                                        <i class="fas fa-check-circle completada"></i>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-completar" onclick="marcarCompletada(@tarea.Id)">
+                                            <i class="far fa-circle"></i>
+                                        </button>
+                                    }
+                                </div>
+
+                                <div class="tarea-contenido">
+                                    <div class="tarea-descripcion @(tarea.NombreEstado == "Completada" ? "completada" : "")">
+                                        @tarea.Descripcion
+                                    </div>
+                                    <div class="tarea-meta">
+                                        <span class="tarea-fecha @(tarea.EsVencida ? "vencida" : tarea.EsUrgente ? "urgente" : "")">
+                                            <i class="far fa-calendar"></i>
+                                            @tarea.FechaVencimiento.ToString("dd/MM/yyyy")
+                                            @if (tarea.EsVencida)
+                                            {
+                                                <span class="dias-vencida">(@tarea.DiasVencida días vencida)</span>
+                                            }
+                                            else if (tarea.EsHoy)
+                                            {
+                                                <span class="hoy">(Hoy)</span>
+                                            }
+                                            else if (tarea.EsUrgente)
+                                            {
+                                                <span class="urgente">(Urgente)</span>
+                                            }
+                                        </span>
+                                        <span class="tarea-estado" style="background-color: @tarea.ColorEstado;">
+                                            @tarea.NombreEstado
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="tarea-acciones">
+                                    <div class="dropdown">
+                                        <button class="btn-accion" data-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#" onclick="editarTarea(@tarea.Id)">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            @foreach (var estado in Model.Estados.Where(e => e.Id != tarea.EstadoId))
+                                            {
+                                                <a class="dropdown-item" href="#" onclick="cambiarEstado(@tarea.Id, @estado.Id)">
+                                                    <i class="fas fa-arrow-right"></i> Marcar como @estado.Nombre
+                                                </a>
+                                            }
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger" href="#" onclick="eliminarTarea(@tarea.Id)">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="sin-tareas">
+                            <div class="sin-tareas-icono">📝</div>
+                            <div class="sin-tareas-mensaje">
+                                @switch (Model.VistaActual)
+                                {
+                                    case "vencidas":
+                                        <span>¡Excelente! No tienes tareas vencidas.</span>
+                                        break;
+                                    case "estado":
+                                        <span>No hay tareas en este estado.</span>
+                                        break;
+                                    default:
+                                        <span>No tienes tareas pendientes. ¡Agrega una nueva!</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar tarea -->
+<div class="modal fade" id="modalEditarTarea" tabindex="-1" role="dialog" aria-labelledby="modalEditarTareaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarTareaLabel">Editar Tarea</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarTarea">
+                    <input type="hidden" id="editTareaId" name="id">
+                    <div class="form-group">
+                        <label for="editDescripcion">Descripción</label>
+                        <input type="text" class="form-control" id="editDescripcion" name="descripcion" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFechaVencimiento">Fecha de Vencimiento</label>
+                        <input type="date" class="form-control" id="editFechaVencimiento" name="fechaVencimiento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEstadoId">Estado</label>
+                        <select class="form-control" id="editEstadoId" name="estadoId">
+                            <option value="1">Pendiente</option>
+                            <option value="2">En Progreso</option>
+                            <option value="3">Completada</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarTarea()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- jQuery (necesario para AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS (para los modales) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Font Awesome (para iconos) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        // Funciones JavaScript para interactividad
+        function marcarCompletada(id) {
+            $.post('@Url.Action("MarcarCompletada", "Home")', { id: id }, function(response) {
+                if (response.success) {
+                    mostrarMensaje(response.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    mostrarMensaje(response.message, 'error');
+                }
+            });
+        }
+
+        function cambiarEstado(id, estadoId) {
+            $.post('@Url.Action("CambiarEstado", "Home")', { id: id, estadoId: estadoId }, function(response) {
+                if (response.success) {
+                    mostrarMensaje(response.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    mostrarMensaje(response.message, 'error');
+                }
+            });
+        }
+
+        function eliminarTarea(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
+                $.post('@Url.Action("EliminarTarea", "Home")', { id: id }, function(response) {
+                    if (response.success) {
+                        mostrarMensaje(response.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        mostrarMensaje(response.message, 'error');
+                    }
+                });
+            }
+        }
+
+        function editarTarea(id) {
+            $.get('@Url.Action("ObtenerTarea", "Home")', { id: id }, function(response) {
+                if (response.success) {
+                    $('#editTareaId').val(response.tarea.id);
+                    $('#editDescripcion').val(response.tarea.descripcion);
+                    $('#editFechaVencimiento').val(response.tarea.fechaVencimiento);
+                    $('#editEstadoId').val(response.tarea.estadoId);
+                    $('#modalEditarTarea').modal('show');
+                } else {
+                    mostrarMensaje(response.message, 'error');
+                }
+            });
+        }
+
+        function guardarTarea() {
+            var formData = $('#formEditarTarea').serialize();
+
+            $.post('@Url.Action("ActualizarTarea", "Home")', formData, function(response) {
+                if (response.success) {
+                    $('#modalEditarTarea').modal('hide');
+                    mostrarMensaje(response.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    mostrarMensaje(response.message, 'error');
+                }
+            });
+        }
+
+        function mostrarMensaje(mensaje, tipo) {
+            var alertClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
+            var alertHtml = `<div class="alert ${alertClass} alert-dismissible fade show mensaje-flotante" role="alert">
+                                ${mensaje}
+                                <button type="button" class="close" data-dismiss="alert">
+                                    <span>&times;</span>
+                                </button>
+                             </div>`;
+
+            $('body').append(alertHtml);
+
+            setTimeout(() => {
+                $('.mensaje-flotante').fadeOut();
+            }, 3000);
+        }
+
+        // Configurar fecha mínima para nueva tarea
+        $(document).ready(function() {
+            var today = new Date().toISOString().split('T')[0];
+            $('input[type="date"]').attr('min', today);
+        });
+    </script>
+}

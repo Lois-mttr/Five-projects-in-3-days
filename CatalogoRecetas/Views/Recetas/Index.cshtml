@@ -1,0 +1,116 @@
+@* Ubicación: ~/Views/Recetas/Index.cshtml *@
+@model IEnumerable<CatalogoRecetas.Models.Receta>
+
+@{
+    ViewBag.Title = "Mi Catálogo de Recetas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="header-section">
+    <h1 class="page-title">
+        <i class="icon-chef"></i>
+        Mi Catálogo de Recetas
+    </h1>
+    <p class="page-subtitle">Descubre y organiza tus recetas favoritas</p>
+</div>
+
+<div class="actions-bar">
+    <div class="search-section">
+        @using (Html.BeginForm("Index", "Recetas", FormMethod.Get, new { @class = "search-form" }))
+        {
+            <div class="search-group">
+                @Html.TextBox("buscar", ViewBag.Buscar as string, new
+                {
+                    @class = "search-input",
+                    @placeholder = "Buscar recetas o ingredientes..."
+                })
+                @Html.DropDownList("categoriaId", ViewBag.Categorias as SelectList,
+                    "Todas las categorías", new { @class = "category-select" })
+                <button type="submit" class="btn btn-search">
+                    <i class="icon-search"></i>
+                    Buscar
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="action-buttons">
+        @Html.ActionLink("Nueva Receta", "Crear", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+
+<div class="recipes-grid">
+    @if (Model.Any())
+    {
+        foreach (var receta in Model)
+        {
+            <div class="recipe-card">
+                <div class="recipe-image">
+                    @if (!string.IsNullOrEmpty(receta.ImagenRuta))
+                    {
+                        <img src="@receta.ImagenRuta" alt="@receta.Nombre" />
+                    }
+                    else
+                    {
+                        <div class="no-image">
+                            <i class="icon-image"></i>
+                        </div>
+                    }
+                </div>
+
+                <div class="recipe-content">
+                    <h3 class="recipe-title">@receta.Nombre</h3>
+
+                    <div class="recipe-meta">
+                        <span class="category">@receta.CategoriaId</span>
+                        @if (receta.TiempoPreparacion.HasValue)
+                        {
+                            <span class="time">
+                                <i class="icon-clock"></i>
+                                @receta.TiempoPreparacion min
+                            </span>
+                        }
+                        @if (receta.Porciones.HasValue)
+                        {
+                            <span class="servings">
+                                <i class="icon-users"></i>
+                                @receta.Porciones porciones
+                            </span>
+                        }
+                    </div>
+
+                    <p class="recipe-preview">
+                        @(receta.Ingredientes.Length > 100 ?
+                          receta.Ingredientes.Substring(0, 100) + "..." :
+                          receta.Ingredientes)
+                    </p>
+
+                    <div class="recipe-actions">
+                        @Html.ActionLink("Ver Detalles", "Detalles", new { id = receta.Id },
+                            new { @class = "btn btn-outline" })
+                        @Html.ActionLink("Editar", "Editar", new { id = receta.Id },
+                            new { @class = "btn btn-secondary" })
+                        @Html.ActionLink("Eliminar", "Eliminar", new { id = receta.Id },
+                            new { @class = "btn btn-danger" })
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="icon-chef-large"></i>
+            <h3>No hay recetas disponibles</h3>
+            <p>Comienza agregando tu primera receta deliciosa</p>
+            @Html.ActionLink("Crear Primera Receta", "Crear", null, new { @class = "btn btn-primary" })
+        </div>
+    }
+</div>

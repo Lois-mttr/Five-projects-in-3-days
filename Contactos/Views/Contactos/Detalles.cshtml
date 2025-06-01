@@ -1,0 +1,42 @@
+@model Contactos.Models.Contacto
+
+@{
+    ViewBag.Title = "Detalles del Contacto";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Detalles del Contacto</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4>@Model.Nombre</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Notas)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Notas)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaCreacion)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaCreacion)</dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    @Html.ActionLink("Editar", "Editar", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-secondary" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

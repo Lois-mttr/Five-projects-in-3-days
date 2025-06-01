@@ -1,0 +1,167 @@
+@* Ubicación: ~/Views/Recetas/Editar.cshtml *@
+@model CatalogoRecetas.Models.Receta
+
+@{
+    ViewBag.Title = "Editar Receta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="form-container">
+    <div class="form-header">
+        <h1>
+            <i class="icon-edit"></i>
+            Editar Receta
+        </h1>
+        <p>Modifica los detalles de tu receta</p>
+    </div>
+
+    @using (Html.BeginForm("Editar", "Recetas", FormMethod.Post,
+           new { enctype = "multipart/form-data", @class = "recipe-form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.FechaCreacion)
+        @Html.HiddenFor(model => model.ImagenRuta)
+
+        <div class="form-section">
+            <h3>Información Básica</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Nombre, new { @class = "form-label" })
+                @Html.EditorFor(model => model.Nombre, new
+                {
+                    htmlAttributes = new
+                    {
+                        @class = "form-input",
+                        @placeholder = "Ej: Pasta Alfredo Casera"
+                    }
+                })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "form-error" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CategoriaId, new { @class = "form-label" })
+                @Html.DropDownList("CategoriaId", ViewBag.CategoriaId as SelectList,
+                    "Selecciona una categoría", new { @class = "form-select" })
+                @Html.ValidationMessageFor(model => model.CategoriaId, "", new { @class = "form-error" })
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half">
+                    @Html.LabelFor(model => model.TiempoPreparacion, new { @class = "form-label" })
+                    @Html.EditorFor(model => model.TiempoPreparacion, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input",
+                            @type = "number",
+                            @min = "1",
+                            @placeholder = "30"
+                        }
+                    })
+                    @Html.ValidationMessageFor(model => model.TiempoPreparacion, "", new { @class = "form-error" })
+                </div>
+
+                <div class="form-group half">
+                    @Html.LabelFor(model => model.Porciones, new { @class = "form-label" })
+                    @Html.EditorFor(model => model.Porciones, new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-input",
+                            @type = "number",
+                            @min = "1",
+                            @placeholder = "4"
+                        }
+                    })
+                    @Html.ValidationMessageFor(model => model.Porciones, "", new { @class = "form-error" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Imagen de la Receta</h3>
+
+            @if (!string.IsNullOrEmpty(Model.ImagenRuta))
+            {
+                <div class="current-image">
+                    <img src="@Model.ImagenRuta" alt="@Model.Nombre" class="img-thumbnail" style="max-width: 200px; margin-bottom: 15px;" />
+                    <p class="form-help">Imagen actual</p>
+                </div>
+            }
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ArchivoImagen, new { @class = "form-label" })
+                <input type="file" name="ArchivoImagen" accept="image/*" class="form-file" />
+                <small class="form-help">
+                    Formatos permitidos: JPG, PNG, GIF (máximo 5MB).
+                    @if (!string.IsNullOrEmpty(Model.ImagenRuta))
+                    {
+                        <span>Dejar en blanco para mantener la imagen actual.</span>
+                    }
+                </small>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Ingredientes</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Ingredientes, new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.Ingredientes, new
+                {
+                    @class = "form-textarea",
+                    @rows = "6",
+                    @placeholder = "Lista todos los ingredientes necesarios"
+                })
+                @Html.ValidationMessageFor(model => model.Ingredientes, "", new { @class = "form-error" })
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Instrucciones de Preparación</h3>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Instrucciones, new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.Instrucciones, new
+                {
+                    @class = "form-textarea",
+                    @rows = "8",
+                    @placeholder = "Describe paso a paso cómo preparar la receta"
+                })
+                @Html.ValidationMessageFor(model => model.Instrucciones, "", new { @class = "form-error" })
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="icon-save"></i>
+                Guardar Cambios
+            </button>
+            @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-outline" })
+            @Html.ActionLink("Ver Detalles", "Detalles", new { id = Model.Id }, new { @class = "btn btn-info" })
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+@section Styles {
+    <style>
+        .current-image {
+            margin-bottom: 15px;
+        }
+
+            .current-image img {
+                border: 2px solid #eee;
+                padding: 3px;
+            }
+
+        .form-help {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+}

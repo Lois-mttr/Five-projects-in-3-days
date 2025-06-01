@@ -1,0 +1,161 @@
+﻿/* Ubicación: Content/Site.css */
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 20px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* Estilos personalizados */
+.navbar-inverse {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #5e72e4;
+}
+
+    .navbar-inverse .navbar-brand,
+    .navbar-inverse .navbar-nav > li > a {
+        color: #ffffff;
+    }
+
+        .navbar-inverse .navbar-brand:hover,
+        .navbar-inverse .navbar-nav > li > a:hover {
+            color: #f8f9fa;
+        }
+
+.jumbotron {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.panel {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+    .panel:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+
+.panel-primary {
+    border-color: #5e72e4;
+}
+
+    .panel-primary > .panel-heading {
+        background-color: #5e72e4;
+        border-color: #5e72e4;
+    }
+
+.btn-primary {
+    background-color: #5e72e4;
+    border-color: #5e72e4;
+}
+
+    .btn-primary:hover {
+        background-color: #324cdd;
+        border-color: #324cdd;
+    }
+
+.btn-success {
+    background-color: #2dce89;
+    border-color: #2dce89;
+}
+
+    .btn-success:hover {
+        background-color: #26af74;
+        border-color: #26af74;
+    }
+
+.btn-warning {
+    background-color: #fb6340;
+    border-color: #fb6340;
+}
+
+    .btn-warning:hover {
+        background-color: #fa3a0e;
+        border-color: #fa3a0e;
+    }
+
+.btn-danger {
+    background-color: #f5365c;
+    border-color: #f5365c;
+}
+
+    .btn-danger:hover {
+        background-color: #ec0c38;
+        border-color: #ec0c38;
+    }
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f9fafc;
+}
+
+.table-hover > tbody > tr:hover {
+    background-color: #f6f9fc;
+}
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 300px;
+    width: 100%;
+}
+
+.well {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+footer {
+    margin-top: 30px;
+    color: #8898aa;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .jumbotron h1 {
+        font-size: 24px;
+    }
+
+    .jumbotron .lead {
+        font-size: 16px;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .btn-group .btn {
+            margin-bottom: 5px;
+        }
+
+    .chart-container {
+        height: 250px;
+    }
+}

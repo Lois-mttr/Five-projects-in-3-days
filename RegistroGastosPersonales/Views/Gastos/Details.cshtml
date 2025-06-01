@@ -1,0 +1,52 @@
+@* Ubicación: Views/Gastos/Details.cshtml *@
+@model RegistroGastosPersonales.Models.Gasto
+
+@{
+    ViewBag.Title = "Detalles del Gasto";
+}
+
+<h2>Detalles del Gasto</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Monto)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Monto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Fecha)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Fecha)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreCategoria)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NombreCategoria)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaCreacion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FechaCreacion)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
+    @Html.ActionLink("Volver a la Lista", "Index", null, new { @class = "btn btn-default" })
+</p>

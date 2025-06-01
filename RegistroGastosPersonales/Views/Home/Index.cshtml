@@ -1,0 +1,67 @@
+@model RegistroGastosPersonales.Models.ResumenGastos
+
+
+@{
+    ViewBag.Title = "Inicio";
+}
+
+<div class="jumbotron">
+    <h1>Registro de Gastos Personales</h1>
+    <p class="lead">Lleva un control detallado de tus gastos diarios de manera sencilla y eficiente.</p>
+    <p>@Html.ActionLink("Registrar nuevo gasto", "Create", "Gastos", null, new { @class = "btn btn-primary btn-lg" })</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total de Gastos</h3>
+            </div>
+            <div class="panel-body">
+                <h2 class="text-center">@String.Format("{0:C}", Model.TotalGastos)</h2>
+                <p class="text-center">@Model.TotalRegistros registros</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gastos por Categoría</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Total</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var categoria in Model.GastosPorCategoria)
+                        {
+                            <tr>
+                                <td>@categoria.NombreCategoria</td>
+                                <td>@String.Format("{0:C}", categoria.TotalPorCategoria)</td>
+                                <td>@categoria.CantidadGastos</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="well">
+            <h4>Acciones Rápidas</h4>
+            <div class="btn-group">
+                @Html.ActionLink("Ver todos los gastos", "Index", "Gastos", null, new { @class = "btn btn-default" })
+                @Html.ActionLink("Ver resumen detallado", "Resumen", "Gastos", null, new { @class = "btn btn-default" })
+                @Html.ActionLink("Registrar nuevo gasto", "Create", "Gastos", null, new { @class = "btn btn-success" })
+            </div>
+        </div>
+    </div>
+</div>
